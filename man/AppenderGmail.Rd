@@ -24,6 +24,7 @@ for details.
 Other Appenders: 
 \code{\link{AppenderDbi}},
 \code{\link{AppenderDt}},
+\code{\link{AppenderElasticSearch}},
 \code{\link{AppenderPushbullet}},
 \code{\link{AppenderSendmail}},
 \code{\link{AppenderSyslog}}
