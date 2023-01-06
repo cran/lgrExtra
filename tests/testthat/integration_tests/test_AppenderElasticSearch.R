@@ -1,6 +1,9 @@
 # requires a local elastic search instance
 try(source(rprojroot::find_testthat_root_file("integration_tests/elastic_test_user.R")))
 
+elastic_ip <- "127.0.0.1"
+
+
 test_that("AppenderElasticSearch basic logging works", {
   con <- elastic::connect("127.0.0.1", user = Sys.getenv("ELASTIC_USER"), pwd = Sys.getenv("ELASTIC_PASSWORD"))
   index <- paste(sample(letters, 48, replace = TRUE), collapse = "")
@@ -248,4 +251,150 @@ test_that("AppenderElasticSearch$get_data() return_type works", {
   expect_type(app$get_data(result_type = "list"), "list")
   expect_true("hits" %in% names(app$get_data(result_type = "list")))
   expect_type(app$get_data(result_type = "json"), "character")
+})
+
+
+test_that("AppenderElasticSearch can create indices from functions", {
+
+  # arrange
+  con <- elastic::connect(elastic_ip)
+
+  indices <- c("test_logging_r_1", "test_logging_r_2")
+  sel_index <- 1
+  index <- function() indices[[sel_index]]
+
+  on.exit({
+    try(elastic::index_delete(con, indices[[1]]))
+    try(elastic::index_delete(con, indices[[2]]))
+    lg$config(NULL)
+  })
+
+  app <- AppenderElasticSearch$new(con, index)
+
+  lg <-
+    get_logger("test/AppenderElasticSearch")$
+    add_appender(app)$
+    set_propagate(FALSE)$
+    set_threshold(NA)
+
+  # act
+  expect_identical(app$index, indices[[1]])
+  msg1 <- "this should end up in index-1"
+  lg$fatal(msg1, error = "404")
+  app$flush()
+
+  sel_index <- 2
+  expect_identical(app$index, indices[[2]])
+  msg2 <- "this should end up in index-2"
+  lg$fatal(msg2, foo = "asf")
+  app$flush()
+
+  Sys.sleep(1)
+
+  # assert
+  log1 <- elastic::Search(con, indices[[1]], body = '{"query": {"match_all": {}} }')$hits$hits
+  log2 <- elastic::Search(con, indices[[2]], body = '{"query": {"match_all": {}} }')$hits$hits
+  expect_identical(log1[[1]][["_source"]][["msg"]], msg1)
+  expect_identical(log2[[1]][["_source"]][["msg"]], msg2)
+})
+
+
+test_that("AppenderElasticSearch - with create body provided - creates index with correct data types", {
+
+  # arrange
+  con <- elastic::connect(elastic_ip)
+
+  index <- "test_logging_r_1"
+  body <-
+  '
+  {
+    "mappings": {
+      "_source": {
+          "includes": ["*"]
+      },
+      "properties": {
+        "caller": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "error": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "level": {
+          "type": "long"
+        },
+        "logger": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "msg": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "timestamp": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "foobar": {
+          "type": "text"
+        }
+      }
+    }
+  }
+'
+
+  jsonlite::toJSON(body)
+
+  on.exit({
+    try(elastic::index_delete(con, index))
+    lg$config(NULL)
+  })
+
+  app <- AppenderElasticSearch$new(
+    con,
+    index,
+    index_create_body = body
+  )
+
+  lg <-
+    get_logger("test/AppenderElasticSearch")$
+    add_appender(app)$
+    set_propagate(FALSE)$
+    set_threshold(NA)
+
+  # act
+  msg1 <- "this should end up in index-1"
+  lg$fatal(msg1, error = "404")
+  app$flush()
+  Sys.sleep(1)
+
+  # assert
+  mappings <- elastic::mapping_get(con, index)
+  expect_identical(mappings$test_logging_r_1$mappings$properties$foobar$type, "text")
 })
