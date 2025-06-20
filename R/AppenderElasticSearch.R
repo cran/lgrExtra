@@ -4,10 +4,8 @@
 
 #' Log to ElasticSearch
 #'
-#' Log to ElasticSearch via HTTP
-#'
-#' **NOTE**: **Experimental**; not yet fully documented and and details are
-#' subject to change
+#' **NOTE**: **Maturing**; not yet fully documented but well tested in
+#'   a production scenario
 #'
 #' @template appender
 #'
@@ -264,7 +262,7 @@ AppenderElasticSearch <- R6::R6Class(
     #' * a `function` returning a `character` scalar json string (or `NULL`)
     #' Optional settings,
     #' mappings, aliases, etc... in case the target index has to be created
-    #' by the logger. See \url{https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html}
+    #' by the logger. See \url{https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-create}
     index_create_body = function(){
       res <- get(".index_create_body", envir = private)
 

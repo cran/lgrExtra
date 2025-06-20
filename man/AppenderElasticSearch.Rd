@@ -8,17 +8,17 @@ The \verb{$new()} method returns an \link[R6:R6Class]{R6::R6} that inherits from
 \link[lgr:Appender]{lgr::Appender} and can be uses as an appender by a \link[lgr:Logger]{lgr::Logger}.
 }
 \description{
-Log to ElasticSearch via HTTP
-}
-\details{
-\strong{NOTE}: \strong{Experimental}; not yet fully documented and and details are
-subject to change
+\strong{NOTE}: \strong{Maturing}; not yet fully documented but well tested in
+a production scenario
 }
 \seealso{
 Other Appenders: 
+\code{\link{AppenderAWSCloudWatchLog}},
 \code{\link{AppenderDbi}},
 \code{\link{AppenderDt}},
+\code{\link{AppenderDynatrace}},
 \code{\link{AppenderGmail}},
+\code{\link{AppenderPool}},
 \code{\link{AppenderPushbullet}},
 \code{\link{AppenderSendmail}},
 \code{\link{AppenderSyslog}}
@@ -43,7 +43,7 @@ Other Appenders:
 \item a \code{function} returning a \code{character} scalar json string (or \code{NULL})
 Optional settings,
 mappings, aliases, etc... in case the target index has to be created
-by the logger. See \url{https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html}
+by the logger. See \url{https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-create}
 }}
 }
 \if{html}{\out{</div>}}

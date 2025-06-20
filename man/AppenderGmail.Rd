@@ -22,9 +22,12 @@ for details.
 \link[lgr:LayoutFormat]{lgr::LayoutFormat}, \link[lgr:LayoutGlue]{lgr::LayoutGlue}
 
 Other Appenders: 
+\code{\link{AppenderAWSCloudWatchLog}},
 \code{\link{AppenderDbi}},
 \code{\link{AppenderDt}},
+\code{\link{AppenderDynatrace}},
 \code{\link{AppenderElasticSearch}},
+\code{\link{AppenderPool}},
 \code{\link{AppenderPushbullet}},
 \code{\link{AppenderSendmail}},
 \code{\link{AppenderSyslog}}
