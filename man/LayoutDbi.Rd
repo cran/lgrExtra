@@ -54,7 +54,6 @@ defaults for \verb{$format_table_name}, \verb{$format_colnames} and \verb{$forma
 \code{\link[=select_dbi_layout]{select_dbi_layout()}}, \link[DBI:DBI-package]{DBI::DBI},
 
 Other Layout: 
-\code{\link{LayoutDynatrace}},
 \code{\link{LayoutElasticSearch}}
 }
 \concept{Layout}
@@ -116,6 +115,7 @@ to JSON strings}
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
+<li><span class="pkg-link" data-pkg="lgr" data-topic="Layout" data-id="set_excluded_fields"><a href='../../lgr/html/Layout.html#method-Layout-set_excluded_fields'><code>lgr::Layout$set_excluded_fields()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="lgr" data-topic="LayoutFormat" data-id="format_event"><a href='../../lgr/html/LayoutFormat.html#method-LayoutFormat-format_event'><code>lgr::LayoutFormat$format_event()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="lgr" data-topic="LayoutFormat" data-id="read"><a href='../../lgr/html/LayoutFormat.html#method-LayoutFormat-read'><code>lgr::LayoutFormat$read()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="lgr" data-topic="LayoutFormat" data-id="set_colors"><a href='../../lgr/html/LayoutFormat.html#method-LayoutFormat-set_colors'><code>lgr::LayoutFormat$set_colors()</code></a></span></li>
@@ -132,7 +132,7 @@ to JSON strings}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{LayoutDbi$new(
   col_types = c(level = "integer", timestamp = "timestamp", logger = "varchar(256)",
-    caller = "varchar(256)", msg = "varchar(2048)"),
+    caller = "varchar(256)", msg = "varchar(2048)", rawMsg = "varchar(2048)"),
   serialized_cols = NULL,
   fmt = "\%L [\%t] \%m  \%f",
   timestamp_fmt = "\%Y-\%m-\%d \%H:\%M:\%S",
